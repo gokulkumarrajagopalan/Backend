@@ -1,0 +1,144 @@
+package com.tally.controller;
+
+import com.tally.entity.BankReconciliation;
+import com.tally.service.BankReconciliationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/bank-reconciliations")
+public class BankReconciliationController {
+    @Autowired
+    private BankReconciliationService bankReconciliationService;
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createReconciliation(@RequestBody BankReconciliation reconciliation) {
+        try {
+            BankReconciliation created = bankReconciliationService.createReconciliation(reconciliation);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Bank reconciliation created successfully");
+            response.put("data", created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getReconciliationById(@PathVariable Long id) {
+        try {
+            Optional<BankReconciliation> reconciliation = bankReconciliationService.getReconciliationById(id);
+            Map<String, Object> response = new HashMap<>();
+            if (reconciliation.isPresent()) {
+                response.put("success", true);
+                response.put("data", reconciliation.get());
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "Reconciliation not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<Map<String, Object>> getAllReconciliations(@PathVariable Long companyId) {
+        try {
+            List<BankReconciliation> reconciliations = bankReconciliationService.getAllReconciliations(companyId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", reconciliations);
+            response.put("count", reconciliations.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/company/{companyId}/status/{status}")
+    public ResponseEntity<Map<String, Object>> getReconciliationsByStatus(@PathVariable Long companyId, @PathVariable String status) {
+        try {
+            List<BankReconciliation> reconciliations = bankReconciliationService.getReconciliationsByStatus(companyId, status);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", reconciliations);
+            response.put("count", reconciliations.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> updateReconciliation(@PathVariable Long id, @RequestBody BankReconciliation reconciliation) {
+        try {
+            BankReconciliation updated = bankReconciliationService.updateReconciliation(id, reconciliation);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Reconciliation updated successfully");
+            response.put("data", updated);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/{id}/complete")
+    public ResponseEntity<Map<String, Object>> completeReconciliation(@PathVariable Long id) {
+        try {
+            BankReconciliation completed = bankReconciliationService.completeReconciliation(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Reconciliation completed");
+            response.put("data", completed);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteReconciliation(@PathVariable Long id) {
+        try {
+            bankReconciliationService.deleteReconciliation(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Reconciliation deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+}

@@ -1,0 +1,167 @@
+package com.tally.controller;
+
+import com.tally.entity.JournalEntry;
+import com.tally.service.JournalEntryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/journal-entries")
+public class JournalEntryController {
+    @Autowired
+    private JournalEntryService journalEntryService;
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createJournalEntry(@RequestBody JournalEntry entry) {
+        try {
+            JournalEntry createdEntry = journalEntryService.createJournalEntry(entry);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Journal entry created successfully");
+            response.put("data", createdEntry);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getJournalEntryById(@PathVariable Long id) {
+        try {
+            Optional<JournalEntry> entry = journalEntryService.getJournalEntryById(id);
+            Map<String, Object> response = new HashMap<>();
+            if (entry.isPresent()) {
+                response.put("success", true);
+                response.put("data", entry.get());
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "Journal entry not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<Map<String, Object>> getEntriesByCompany(@PathVariable Long companyId) {
+        try {
+            List<JournalEntry> entries = journalEntryService.getEntriesByCompany(companyId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", entries);
+            response.put("count", entries.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/company/{companyId}/status/{status}")
+    public ResponseEntity<Map<String, Object>> getEntriesByStatus(@PathVariable Long companyId, @PathVariable String status) {
+        try {
+            List<JournalEntry> entries = journalEntryService.getEntriesByStatus(companyId, status);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", entries);
+            response.put("count", entries.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/company/{companyId}/date-range")
+    public ResponseEntity<Map<String, Object>> getEntriesByDateRange(
+            @PathVariable Long companyId,
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        try {
+            List<JournalEntry> entries = journalEntryService.getEntriesByDateRange(
+                companyId, 
+                LocalDate.parse(startDate), 
+                LocalDate.parse(endDate)
+            );
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", entries);
+            response.put("count", entries.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> updateJournalEntry(@PathVariable Long id, @RequestBody JournalEntry entry) {
+        try {
+            JournalEntry updatedEntry = journalEntryService.updateJournalEntry(id, entry);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Journal entry updated successfully");
+            response.put("data", updatedEntry);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/{id}/post")
+    public ResponseEntity<Map<String, Object>> postJournalEntry(@PathVariable Long id) {
+        try {
+            JournalEntry postedEntry = journalEntryService.postJournalEntry(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Journal entry posted successfully");
+            response.put("data", postedEntry);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteJournalEntry(@PathVariable Long id) {
+        try {
+            journalEntryService.deleteJournalEntry(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Journal entry deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+}

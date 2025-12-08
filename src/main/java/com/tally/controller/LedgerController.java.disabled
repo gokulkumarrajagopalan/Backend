@@ -1,0 +1,60 @@
+package com.tally.controller;
+
+import com.tally.entity.Ledger;
+import com.tally.service.LedgerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/ledgers")
+@CrossOrigin(origins = "*")
+public class LedgerController {
+    
+    @Autowired
+    private LedgerService ledgerService;
+    
+    @GetMapping
+    public ResponseEntity<List<Ledger>> getAllLedgers() {
+        return ResponseEntity.ok(ledgerService.getAllLedgers());
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Ledger> getLedgerById(@PathVariable Long id) {
+        Optional<Ledger> ledger = ledgerService.getLedgerById(id);
+        return ledger.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    
+    @PostMapping
+    public ResponseEntity<Ledger> createLedger(@RequestBody Ledger ledger) {
+        Ledger createdLedger = ledgerService.createLedger(ledger);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdLedger);
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Ledger> updateLedger(@PathVariable Long id, @RequestBody Ledger ledger) {
+        Ledger updatedLedger = ledgerService.updateLedger(id, ledger);
+        return ResponseEntity.ok(updatedLedger);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLedger(@PathVariable Long id) {
+        ledgerService.deleteLedger(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/group/{groupId}")
+    public ResponseEntity<List<Ledger>> getLedgersByGroupId(@PathVariable Long groupId) {
+        return ResponseEntity.ok(ledgerService.getLedgersByGroupId(groupId));
+    }
+    
+    @GetMapping("/total/balance")
+    public ResponseEntity<Double> getTotalBalance() {
+        return ResponseEntity.ok(ledgerService.getTotalBalance());
+    }
+}

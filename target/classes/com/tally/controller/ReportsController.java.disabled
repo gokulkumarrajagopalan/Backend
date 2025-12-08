@@ -1,0 +1,101 @@
+package com.tally.controller;
+
+import com.tally.service.ReportService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/reports")
+public class ReportsController {
+    @Autowired
+    private ReportService reportService;
+
+    @GetMapping("/trial-balance/{companyId}")
+    public ResponseEntity<Map<String, Object>> getTrialBalance(@PathVariable Long companyId) {
+        try {
+            Map<String, Object> trialBalance = reportService.getTrialBalance(companyId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("reportType", "Trial Balance");
+            response.put("data", trialBalance);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/balance-sheet/{companyId}")
+    public ResponseEntity<Map<String, Object>> getBalanceSheet(@PathVariable Long companyId) {
+        try {
+            Map<String, Object> balanceSheet = reportService.getBalanceSheet(companyId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("reportType", "Balance Sheet");
+            response.put("data", balanceSheet);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/profit-loss/{companyId}")
+    public ResponseEntity<Map<String, Object>> getProfitAndLoss(@PathVariable Long companyId) {
+        try {
+            Map<String, Object> profitLoss = reportService.getProfitAndLoss(companyId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("reportType", "Profit & Loss");
+            response.put("data", profitLoss);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/cash-flow/{companyId}")
+    public ResponseEntity<Map<String, Object>> getCashFlow(@PathVariable Long companyId) {
+        try {
+            Map<String, Object> cashFlow = reportService.getCashFlow(companyId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("reportType", "Cash Flow");
+            response.put("data", cashFlow);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/account-ledger/{accountId}")
+    public ResponseEntity<Map<String, Object>> getAccountLedger(@PathVariable Long accountId) {
+        try {
+            Map<String, Object> ledger = reportService.getAccountLedger(accountId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("reportType", "Account Ledger");
+            response.put("data", ledger);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+}

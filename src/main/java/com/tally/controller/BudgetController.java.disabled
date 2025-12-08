@@ -1,0 +1,159 @@
+package com.tally.controller;
+
+import com.tally.entity.Budget;
+import com.tally.service.BudgetService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/budgets")
+public class BudgetController {
+    @Autowired
+    private BudgetService budgetService;
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createBudget(@RequestBody Budget budget) {
+        try {
+            Budget createdBudget = budgetService.createBudget(budget);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Budget created successfully");
+            response.put("data", createdBudget);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getBudgetById(@PathVariable Long id) {
+        try {
+            Optional<Budget> budget = budgetService.getBudgetById(id);
+            Map<String, Object> response = new HashMap<>();
+            if (budget.isPresent()) {
+                response.put("success", true);
+                response.put("data", budget.get());
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "Budget not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<Map<String, Object>> getAllBudgets(@PathVariable Long companyId) {
+        try {
+            List<Budget> budgets = budgetService.getAllBudgets(companyId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", budgets);
+            response.put("count", budgets.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/company/{companyId}/status/{status}")
+    public ResponseEntity<Map<String, Object>> getBudgetsByStatus(@PathVariable Long companyId, @PathVariable String status) {
+        try {
+            List<Budget> budgets = budgetService.getBudgetsByStatus(companyId, status);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", budgets);
+            response.put("count", budgets.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> updateBudget(@PathVariable Long id, @RequestBody Budget budget) {
+        try {
+            Budget updatedBudget = budgetService.updateBudget(id, budget);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Budget updated successfully");
+            response.put("data", updatedBudget);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<Map<String, Object>> approveBudget(@PathVariable Long id) {
+        try {
+            Budget budget = budgetService.approveBudget(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Budget approved successfully");
+            response.put("data", budget);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<Map<String, Object>> activateBudget(@PathVariable Long id) {
+        try {
+            Budget budget = budgetService.activateBudget(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Budget activated successfully");
+            response.put("data", budget);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteBudget(@PathVariable Long id) {
+        try {
+            budgetService.deleteBudget(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Budget deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+}
