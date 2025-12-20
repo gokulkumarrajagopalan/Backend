@@ -111,10 +111,10 @@ public class SessionWebSocketHandler extends TextWebSocketHandler {
             if (userSessions.containsKey(userId)) {
                 WebSocketSession oldSession = userSessions.get(userId);
                 
-                System.out.println("⚠️ User " + userId + " (" + username + ") logged in from new device");
-                System.out.println("   Old session ID: " + oldSession.getId());
-                System.out.println("   New session ID: " + session.getId());
-                System.out.println("   Action: Kicking out old session");
+                // System.out.println("⚠️ User " + userId + " (" + username + ") logged in from new device");
+                // System.out.println("   Old session ID: " + oldSession.getId());
+                // System.out.println("   New session ID: " + session.getId());
+                // System.out.println("   Action: Kicking out old session");
                 
                 // Send logout message to old session
                 sendMessage(oldSession, Map.of(
@@ -135,10 +135,10 @@ public class SessionWebSocketHandler extends TextWebSocketHandler {
             session.getAttributes().put("userId", userId);
             session.getAttributes().put("username", username);
             
-            System.out.println("✅ WebSocket session registered for user: " + userId + " (" + username + ")");
-            System.out.println("   Session ID: " + session.getId());
-            System.out.println("   Active sessions: " + userSessions.size());
-            System.out.println("");
+            // System.out.println("✅ WebSocket session registered for user: " + userId + " (" + username + ")");
+            // System.out.println("   Session ID: " + session.getId());
+            // System.out.println("   Active sessions: " + userSessions.size());
+            // System.out.println("");
             
             // Send connection success message
             sendMessage(session, Map.of(
@@ -176,17 +176,17 @@ public class SessionWebSocketHandler extends TextWebSocketHandler {
             if ("HEARTBEAT".equals(type)) {
                 // Respond to heartbeat
                 Long userId = (Long) session.getAttributes().get("userId");
-                System.out.println("   💓 HEARTBEAT from user " + userId);
+                // System.out.println("   💓 HEARTBEAT from user " + userId);
                 sendMessage(session, Map.of(
                     "type", "HEARTBEAT_ACK",
                     "timestamp", System.currentTimeMillis()
                 ));
             } else if ("PING".equals(type)) {
                 // Simple ping-pong
-                System.out.println("   🏓 PING from " + session.getId());
+                // System.out.println("   🏓 PING from " + session.getId());
                 sendMessage(session, Map.of("type", "PONG"));
             } else {
-                System.out.println("   ℹ️ Unknown message type: " + type);
+                // System.out.println("   ℹ️ Unknown message type: " + type);
             }
         } catch (Exception e) {
             System.err.println("❌ Error handling message: " + e.getMessage());
@@ -201,9 +201,9 @@ public class SessionWebSocketHandler extends TextWebSocketHandler {
         
         if (userId != null) {
             userSessions.remove(userId);
-            System.out.println("🔌 WebSocket disconnected for user: " + userId + " (" + username + ")");
-            System.out.println("   Reason: " + status);
-            System.out.println("   Active sessions: " + userSessions.size());
+            // System.out.println("🔌 WebSocket disconnected for user: " + userId + " (" + username + ")");
+            // System.out.println("   Reason: " + status);
+            // System.out.println("   Active sessions: " + userSessions.size());
         }
     }
     
@@ -247,9 +247,9 @@ public class SessionWebSocketHandler extends TextWebSocketHandler {
         WebSocketSession session = userSessions.get(userId);
         if (session != null && session.isOpen()) {
             try {
-                System.out.println("\n🚫 Invalidating session for user: " + userId);
-                System.out.println("   Reason: " + reason);
-                System.out.println("   Session ID: " + session.getId());
+                // System.out.println("\n🚫 Invalidating session for user: " + userId);
+                // System.out.println("   Reason: " + reason);
+                // System.out.println("   Session ID: " + session.getId());
                 
                 sendMessage(session, Map.of(
                     "type", "SESSION_INVALIDATED",
@@ -259,14 +259,14 @@ public class SessionWebSocketHandler extends TextWebSocketHandler {
                 session.close(CloseStatus.NORMAL);
                 userSessions.remove(userId);
                 
-                System.out.println("✅ Session invalidated successfully");
-                System.out.println("");
+                // System.out.println("✅ Session invalidated successfully");
+                // System.out.println("");
             } catch (Exception e) {
                 System.err.println("❌ Error invalidating session: " + e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            System.out.println("ℹ️ No active session found for user: " + userId);
+            // System.out.println("ℹ️ No active session found for user: " + userId);
         }
     }
     

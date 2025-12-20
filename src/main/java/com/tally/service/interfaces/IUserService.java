@@ -30,6 +30,16 @@ public interface IUserService {
     Optional<User> authenticateUser(String username, String password);
     
     /**
+     * Authenticate user with email, licence number and password
+     */
+    Optional<User> authenticateUserByEmailAndLicence(String email, Long licenceNo, String password);
+    
+    /**
+     * Find user by email and licence number combination
+     */
+    Optional<User> findByEmailAndLicenceNo(String email, Long licenceNo);
+    
+    /**
      * Validate password
      */
     boolean validatePassword(String rawPassword, String encodedPassword);

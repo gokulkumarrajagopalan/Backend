@@ -90,8 +90,8 @@ public class GroupService {
             // UPDATE existing group for this company
             Group existing = existingGroup.get();
             
-            System.out.println("   ♻️  Updating existing group: " + existing.getGrpName() 
-                + " for Company #" + existing.getCmpId());
+            // System.out.println("   ♻️  Updating existing group: " + existing.getGrpName() 
+            //     + " for Company #" + existing.getCmpId());
             
             // Update all fields except primary key
             existing.setGuid(group.getGuid());              // Update company-specific GUID
@@ -119,8 +119,8 @@ public class GroupService {
             return groupRepository.save(existing);
         } else {
             // CREATE new group for this company
-            System.out.println("   ➕ Creating new group: " + group.getGrpName() 
-                + " for Company #" + group.getCmpId());
+            // System.out.println("   ➕ Creating new group: " + group.getGrpName() 
+            //     + " for Company #" + group.getCmpId());
             
             // Ensure timestamps and defaults are set
             if (group.getCreatedAt() == null) {

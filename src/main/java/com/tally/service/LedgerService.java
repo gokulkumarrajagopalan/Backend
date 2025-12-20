@@ -28,8 +28,8 @@ public class LedgerService {
         if (existingLedger.isPresent()) {
             // UPDATE existing ledger for this company
             Ledger existing = existingLedger.get();
-            System.out.println("♻️ Updating Ledger: " + existing.getLedName() 
-                + " (ID: " + existing.getLedId() + ") for Company #" + existing.getCmpId());
+            // System.out.println("♻️ Updating Ledger: " + existing.getLedName() 
+            //     + " (ID: " + existing.getLedId() + ") for Company #" + existing.getCmpId());
             
             // Update Tally identifiers
             existing.setMasterId(ledger.getMasterId());
@@ -118,8 +118,8 @@ public class LedgerService {
             return ledgerRepository.save(existing);
         } else {
             // CREATE new ledger for this company
-            System.out.println("➕ Creating New Ledger: " + ledger.getLedName() 
-                + " for Company #" + ledger.getCmpId());
+            // System.out.println("➕ Creating New Ledger: " + ledger.getLedName() 
+            //     + " for Company #" + ledger.getCmpId());
             ledger.setSyncStatus("SYNCED");
             ledger.setLastSyncDate(LocalDateTime.now());
             return createLedger(ledger);

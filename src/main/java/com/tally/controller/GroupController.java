@@ -271,20 +271,20 @@ public class GroupController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> createGroup(@RequestBody Group group) {
         try {
-            System.out.println("\n========== GROUP CREATION REQUEST ==========");
-            System.out.println("Group Name: " + group.getGrpName());
-            System.out.println("Company ID: " + group.getCmpId());
-            System.out.println("User ID: " + group.getUserId());
-            System.out.println("Parent: " + group.getGrpParent());
-            System.out.println("Nature: " + group.getGrpNature());
-            System.out.println("Is Revenue: " + group.getIsRevenue());
-            System.out.println("===========================================\n");
+            // System.out.println("\n========== GROUP CREATION REQUEST ==========");
+            // System.out.println("Group Name: " + group.getGrpName());
+            // System.out.println("Company ID: " + group.getCmpId());
+            // System.out.println("User ID: " + group.getUserId());
+            // System.out.println("Parent: " + group.getGrpParent());
+            // System.out.println("Nature: " + group.getGrpNature());
+            // System.out.println("Is Revenue: " + group.getIsRevenue());
+            // System.out.println("===========================================\n");
             
             Group createdGroup = groupService.createGroup(group);
             
-            System.out.println("✓ Group Created Successfully!");
-            System.out.println("Group ID: " + createdGroup.getGrpId());
-            System.out.println("=========================================\n");
+            // System.out.println("✓ Group Created Successfully!");
+            // System.out.println("Group ID: " + createdGroup.getGrpId());
+            // System.out.println("=========================================\n");
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -305,14 +305,14 @@ public class GroupController {
     @PostMapping("/sync")
     public ResponseEntity<Map<String, Object>> syncGroups(@RequestBody List<Group> groups) {
         try {
-            System.out.println("\n========== TALLY SYNC REQUEST ==========");
-            System.out.println("Groups to sync: " + groups.size());
-            System.out.println("=========================================\n");
+            // System.out.println("\n========== TALLY SYNC REQUEST ==========");
+            // System.out.println("Groups to sync: " + groups.size());
+            // System.out.println("=========================================\n");
             
             groupService.syncGroupsFromTally(groups);
             
-            System.out.println("✓ Sync Completed Successfully!");
-            System.out.println("========================================\n");
+            // System.out.println("✓ Sync Completed Successfully!");
+            // System.out.println("========================================\n");
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);

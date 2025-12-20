@@ -20,15 +20,15 @@ public class CompanyController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> createCompany(@RequestBody Company company) {
         try {
-            System.out.println("\n========== COMPANY CREATION REQUEST ==========");
-            System.out.println("Company Name: " + company.getName());
-            System.out.println("User ID: " + company.getUserId());
-            System.out.println("Financial Year Start: " + company.getFinancialYearStart());
-            System.out.println("Books Start: " + company.getBooksStart());
-            System.out.println("GST State: " + company.getGstState());
-            System.out.println("GSTIN: " + company.getGstin());
-            System.out.println("Currency: " + company.getCurrencyFormalName());
-            System.out.println("===========================================\n");
+            // System.out.println("\n========== COMPANY CREATION REQUEST ==========");
+            // System.out.println("Company Name: " + company.getName());
+            // System.out.println("User ID: " + company.getUserId());
+            // System.out.println("Financial Year Start: " + company.getFinancialYearStart());
+            // System.out.println("Books Start: " + company.getBooksStart());
+            // System.out.println("GST State: " + company.getGstState());
+            // System.out.println("GSTIN: " + company.getGstin());
+            // System.out.println("Currency: " + company.getCurrencyFormalName());
+            // System.out.println("===========================================\n");
             
             if (company.getUserId() == null) {
                 throw new RuntimeException("User ID is required");
@@ -36,9 +36,9 @@ public class CompanyController {
             
             Company createdCompany = companyService.createCompany(company);
             
-            System.out.println("✓ Company Created Successfully!");
-            System.out.println("Company ID: " + createdCompany.getId());
-            System.out.println("=========================================\n");
+            // System.out.println("✓ Company Created Successfully!");
+            // System.out.println("Company ID: " + createdCompany.getId());
+            // System.out.println("=========================================\n");
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);

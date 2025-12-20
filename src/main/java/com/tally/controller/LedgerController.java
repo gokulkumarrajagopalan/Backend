@@ -182,7 +182,7 @@ public class LedgerController {
     @PostMapping("/sync")
     public ResponseEntity<SyncResponse> syncLedgersFromTally(@RequestBody List<Ledger> ledgers) {
         try {
-            System.out.println("📥 Received sync request for " + ledgers.size() + " ledgers");
+            // System.out.println("📥 Received sync request for " + ledgers.size() + " ledgers");
             
             List<Ledger> syncedLedgers = ledgerService.syncLedgersFromTally(ledgers);
             
@@ -192,7 +192,7 @@ public class LedgerController {
             response.setTotalProcessed(syncedLedgers.size());
             response.setMessage("Successfully synced " + syncedLedgers.size() + " ledgers from Tally");
             
-            System.out.println("✅ Sync completed: " + syncedLedgers.size() + " ledgers processed");
+            // System.out.println("✅ Sync completed: " + syncedLedgers.size() + " ledgers processed");
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {

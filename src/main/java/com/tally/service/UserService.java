@@ -31,8 +31,8 @@ public class UserService implements IUserService {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("Email already exists");
+        if (userRepository.findByEmailAndLicenceNo(email, licenceNo).isPresent()) {
+            throw new RuntimeException("Email and Licence Number combination already exists");
         }
         
         User user = new User();
@@ -67,6 +67,18 @@ public class UserService implements IUserService {
             return user;
         }
         return Optional.empty();
+    }
+    
+    public Optional<User> authenticateUserByEmailAndLicence(String email, Long licenceNo, String password) {
+        Optional<User> user = userRepository.findByEmailAndLicenceNo(email, licenceNo);
+        if (user.isPresent() && validatePassword(password, user.get().getPassword())) {
+            return user;
+        }
+        return Optional.empty();
+    }
+    
+    public Optional<User> findByEmailAndLicenceNo(String email, Long licenceNo) {
+        return userRepository.findByEmailAndLicenceNo(email, licenceNo);
     }
     
     public void updateDeviceToken(Long userId, String deviceToken) {
