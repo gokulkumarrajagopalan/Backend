@@ -300,6 +300,57 @@ public class GroupController {
     }
     
     /**
+     * PUT /groups/master/{masterId} - Update group by masterId
+     */
+    @PutMapping("/master/{masterId}")
+    public ResponseEntity<Map<String, Object>> updateGroupByMasterId(
+            @PathVariable Long masterId,
+            @RequestBody Group group) {
+        try {
+            group.setMasterId(masterId);
+            Group updatedGroup = groupService.upsertGroup(group);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Group updated successfully");
+            response.put("data", updatedGroup);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Error updating group: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+    
+    /**
+     * DELETE /groups/master/{masterId} - Delete group by masterId
+     */
+    @DeleteMapping("/master/{masterId}")
+    public ResponseEntity<Map<String, Object>> deleteGroupByMasterId(@PathVariable Long masterId) {
+        try {
+            Optional<Group> group = groupService.getGroupByMasterId(masterId);
+            if (group.isPresent()) {
+                groupService.deleteGroup(group.get().getGrpId());
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", true);
+                response.put("message", "Group deleted successfully");
+                response.put("masterId", masterId);
+                return ResponseEntity.ok(response);
+            } else {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Group not found with masterId: " + masterId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Error deleting group: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+    
+    /**
      * POST /groups/sync - Sync groups from Tally (bulk upsert)
      */
     @PostMapping("/sync")

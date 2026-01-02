@@ -23,6 +23,7 @@ public class Currency {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "currency_id", nullable = false)
     private Long currency_id;
 
     @JsonProperty("userId")

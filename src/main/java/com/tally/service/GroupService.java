@@ -46,6 +46,13 @@ public class GroupService {
     }
     
     /**
+     * Get group by Tally Master ID
+     */
+    public Optional<Group> getGroupByMasterId(Long masterId) {
+        return groupRepository.findByMasterId(masterId);
+    }
+    
+    /**
      * Get group by GUID (Tally identifier)
      */
     public Optional<Group> getGroupByGuid(String guid) {
@@ -71,23 +78,21 @@ public class GroupService {
     }
     
     /**
-     * Create or update group - Upsert based on (cmpId, grpName)
-     * This ensures each company can have their own "Cash", "Bank", etc. groups
+     * Create or update group - Upsert based on reconciliation identifier (cmpId + masterId)
      * 
      * CRITICAL FOR MULTI-COMPANY SUPPORT:
-     * - Uses (cmpId, grpName) as unique identifier, NOT GUID alone
-     * - Company 1 "Cash" and Company 2 "Cash" are SEPARATE records
-     * - GUID is company-specific: CMP1-xxx, CMP2-xxx
+     * - Uses (cmpId, masterId) as reconciliation identifier
+     * - Business constraint is (cmpId, grpName) for uniqueness
      */
     public Group upsertGroup(Group group) {
-        // Find existing by company + name (CRITICAL FOR MULTI-COMPANY!)
-        Optional<Group> existingGroup = groupRepository.findByCmpIdAndGrpName(
+        // Use reconciliation identifier: cmpId + masterId
+        Optional<Group> existingGroup = groupRepository.findByCmpIdAndMasterId(
             group.getCmpId(), 
-            group.getGrpName()
+            group.getMasterId()
         );
         
         if (existingGroup.isPresent()) {
-            // UPDATE existing group for this company
+            // UPDATE existing group
             Group existing = existingGroup.get();
             
             // System.out.println("   ♻️  Updating existing group: " + existing.getGrpName() 

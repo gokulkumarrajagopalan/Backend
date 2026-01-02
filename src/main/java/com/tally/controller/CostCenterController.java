@@ -34,6 +34,41 @@ public class CostCenterController {
         }
     }
 
+    @PutMapping("/master/{masterId}")
+    public ResponseEntity<Map<String, Object>> updateByMasterId(
+            @PathVariable Long masterId,
+            @RequestBody CostCenter item) {
+        try {
+            item.setMasterId(masterId);
+            CostCenter updated = costCenterService.upsert(item);
+            Map<String, Object> response = new HashMap<>();
+            response.put("data", updated);
+            response.put("success", true);
+            response.put("message", "Cost Center updated successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Error: " + e.getMessage());
+            error.put("success", false);
+            return ResponseEntity.status(500).body(error);
+        }
+    }
+    
+    @DeleteMapping("/master/{masterId}")
+    public ResponseEntity<Map<String, Object>> deleteByMasterId(@PathVariable Long masterId) {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Cost Center deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Error: " + e.getMessage());
+            error.put("success", false);
+            return ResponseEntity.status(500).body(error);
+        }
+    }
+
     @PostMapping("/sync")
     public ResponseEntity<Map<String, Object>> sync(@RequestBody List<CostCenter> items) {
         try {

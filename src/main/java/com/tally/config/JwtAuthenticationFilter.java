@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                logger.debug("Username extracted: " + username);
+                logger.debug("User authentication processing");
                 if (jwtUtil.isTokenValid(token)) {
                     // Validate device token for single device login
                     String deviceToken = request.getHeader("X-Device-Token");
@@ -58,17 +58,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     
                     if (user.isPresent()) {
                         String storedDeviceToken = user.get().getDeviceToken();
-                        logger.debug("Stored device token: " + storedDeviceToken);
-                        logger.debug("Provided device token: " + deviceToken);
                         
                         if (deviceToken != null && deviceToken.equals(storedDeviceToken)) {
                             UsernamePasswordAuthenticationToken authentication = 
                                 new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
                             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                             SecurityContextHolder.getContext().setAuthentication(authentication);
-                            logger.debug("Authentication set for user: " + username);
+                            logger.debug("Authentication successful");
                         } else {
-                            logger.warn("Device token validation failed for user: " + username + ". Tokens do not match.");
+                            logger.warn("Device token validation failed");
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.getWriter().write("{\"error\": \"Device token invalid. User may be logged in from another device.\"}");
                             response.setContentType("application/json");
@@ -76,13 +74,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         }
                     }
                 } else {
-                    logger.warn("Token validation failed for user: " + username);
+                    logger.warn("Token validation failed");
                 }
             } else if (username != null) {
                 logger.debug("Authentication already set, skipping");
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: " + e.getMessage(), e);
+            logger.error("Cannot set user authentication", e);
         }
         
         filterChain.doFilter(request, response);

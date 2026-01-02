@@ -45,6 +45,18 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
+    @Column(name = "created_by")
+    private Long createdBy;
+    
+    @Column(name = "updated_by")
+    private Long updatedBy;
+    
+    @Column(name = "isactive", columnDefinition = "CHAR(1) default 'Y'", length = 1)
+    private String isActive = "Y";
+    
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+    
     @Column(name = "device_token", length = 500)
     private String deviceToken;
     
@@ -74,6 +86,20 @@ public class User {
     @Column(name = "otp_last_resend_at")
     private LocalDateTime otpLastResendAt;
     
+    // Mobile Fields
+    @Column(name = "mobile", length = 20)
+    private String mobile;
+    
+    @Column(name = "mobile_verified", columnDefinition = "CHAR(1) default 'N'", length = 1)
+    private String mobileVerified = "N";
+    
+    // SMS Limit Fields (3 per 24 hours)
+    @Column(name = "sms_count_today")
+    private Integer smsCountToday = 0;
+    
+    @Column(name = "sms_last_sent_date")
+    private java.time.LocalDate smsLastSentDate;
+    
     // Helper methods for Y/N fields
     public boolean isEnabled() {
         return "Y".equalsIgnoreCase(enabled);
@@ -97,5 +123,21 @@ public class User {
     
     public void setOtpVerified(boolean verified) {
         this.otpVerified = verified ? "Y" : "N";
+    }
+    
+    public boolean isMobileVerified() {
+        return "Y".equalsIgnoreCase(mobileVerified);
+    }
+    
+    public void setMobileVerified(boolean verified) {
+        this.mobileVerified = verified ? "Y" : "N";
+    }
+    
+    public boolean isActive() {
+        return "Y".equalsIgnoreCase(isActive);
+    }
+    
+    public void setActive(boolean active) {
+        this.isActive = active ? "Y" : "N";
     }
 }

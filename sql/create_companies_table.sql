@@ -1,4 +1,21 @@
 
+-- Drop statements for all entity tables
+DROP TABLE IF EXISTS company_sync_status;
+DROP TABLE IF EXISTS companies;
+DROP TABLE IF EXISTS costcategory;
+DROP TABLE IF EXISTS costcenter;
+DROP TABLE IF EXISTS currency;
+DROP TABLE IF EXISTS godown;
+DROP TABLE IF EXISTS "group";
+DROP TABLE IF EXISTS ledger;
+DROP TABLE IF EXISTS stockcategory;
+DROP TABLE IF EXISTS stockgroup;
+DROP TABLE IF EXISTS stockitem;
+DROP TABLE IF EXISTS taxunit;
+DROP TABLE IF EXISTS units;
+DROP TABLE IF EXISTS "user";
+DROP TABLE IF EXISTS vouchertype;
+
 CREATE TABLE IF NOT EXISTS companies (
     -- ========== IDENTITY & REFERENCE ==========
     cmpid BIGSERIAL PRIMARY KEY,

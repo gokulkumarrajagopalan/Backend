@@ -1,5 +1,5 @@
-
-CREATE TABLE vouchertype (
+-- Table: vouchertype
+CREATE TABLE IF NOT EXISTS vouchertype (
     vouchertype_id BIGSERIAL PRIMARY KEY,
     userid BIGINT NOT NULL,
     cmpid BIGINT NOT NULL,
@@ -14,5 +14,9 @@ CREATE TABLE vouchertype (
     isdeemedpositive CHAR(1),  -- 'Y' or 'N'
     affectstotal CHAR(1),      -- 'Y' or 'N'
     printaftersave CHAR(1),    -- 'Y' or 'N'
-    languageid INT
+    languageid INT,
+    
+    CONSTRAINT fk_vouchertype_user FOREIGN KEY (userid) REFERENCES users(userid) ON DELETE CASCADE,
+    CONSTRAINT fk_vouchertype_company FOREIGN KEY (cmpid) REFERENCES companies(cmpid) ON DELETE CASCADE,
+    CONSTRAINT uk_vouchertype_cmpid_name UNIQUE (cmpid, name)
 );

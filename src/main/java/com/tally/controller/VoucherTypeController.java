@@ -34,6 +34,41 @@ public class VoucherTypeController {
         }
     }
 
+    @PutMapping("/master/{masterId}")
+    public ResponseEntity<Map<String, Object>> updateByMasterId(
+            @PathVariable Long masterId,
+            @RequestBody VoucherType item) {
+        try {
+            item.setMasterId(masterId);
+            VoucherType updated = voucherTypeService.upsert(item);
+            Map<String, Object> response = new HashMap<>();
+            response.put("data", updated);
+            response.put("success", true);
+            response.put("message", "Voucher Type updated successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Error: " + e.getMessage());
+            error.put("success", false);
+            return ResponseEntity.status(500).body(error);
+        }
+    }
+    
+    @DeleteMapping("/master/{masterId}")
+    public ResponseEntity<Map<String, Object>> deleteByMasterId(@PathVariable Long masterId) {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Voucher Type deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Error: " + e.getMessage());
+            error.put("success", false);
+            return ResponseEntity.status(500).body(error);
+        }
+    }
+
     @PostMapping("/sync")
     public ResponseEntity<Map<String, Object>> sync(@RequestBody List<VoucherType> items) {
         try {

@@ -20,6 +20,9 @@ public interface LedgerRepository extends JpaRepository<Ledger, Long> {
     Optional<Ledger> findByMasterId(Long masterId);
     List<Ledger> findByAlterId(Long alterId);
     
+    // UPSERT: Find by reconciliation identifier (cmpId + masterId)
+    Optional<Ledger> findByCmpIdAndMasterId(Long cmpId, Long masterId);
+    
     // ========== COMPANY-SPECIFIC QUERIES ==========
     List<Ledger> findByCmpId(Long cmpId);
     List<Ledger> findByCmpIdAndIsActiveAndIsDeleted(Long cmpId, Boolean isActive, Boolean isDeleted);
@@ -74,4 +77,8 @@ public interface LedgerRepository extends JpaRepository<Ledger, Long> {
     // ========== SYNC STATUS ==========
     List<Ledger> findBySyncStatus(String syncStatus);
     List<Ledger> findByCmpIdAndSyncStatus(Long cmpId, String syncStatus);
+    
+    // Get max AlterID for a company
+    @Query("SELECT COALESCE(MAX(l.alterId), 0) FROM Ledger l WHERE l.cmpId = :cmpId")
+    Long getMaxAlterIdForCompany(@Param("cmpId") Long cmpId);
 }

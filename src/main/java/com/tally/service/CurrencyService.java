@@ -27,13 +27,12 @@ public class CurrencyService {
         return currencyRepository.save(currency);
     }
 
-    /**
-     * Create or update currency - Upsert based on (cmpid, name)
-     */
+
     public Currency upsertCurrency(Currency currency) {
-        Optional<Currency> existingCurrency = currencyRepository.findByCmpIdAndName(
+        // Use reconciliation identifier: cmpId + masterId
+        Optional<Currency> existingCurrency = currencyRepository.findByCmpIdAndMasterId(
                 currency.getCmpId(),
-                currency.getName());
+                currency.getMasterId());
 
         if (existingCurrency.isPresent()) {
             Currency existing = existingCurrency.get();

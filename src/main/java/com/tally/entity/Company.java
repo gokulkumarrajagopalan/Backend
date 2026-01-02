@@ -12,6 +12,7 @@ public class Company {
     // ========== IDENTITY & REFERENCE ==========
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cmpid")
     private Long id;
     
     @JsonProperty("userId")

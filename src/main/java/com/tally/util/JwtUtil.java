@@ -13,11 +13,16 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
     
-    @Value("${jwt.expiration}")
+    @Value("${jwt.expiration:900000}")
     private long expiration;
     
+    @Value("${jwt.refresh.expiration:604800000}")
+    private long refreshExpiration;
+    
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        byte[] decodedKey = new byte[secret.getBytes().length];
+        System.arraycopy(secret.getBytes(), 0, decodedKey, 0, secret.getBytes().length);
+        return Keys.hmacShaKeyFor(decodedKey);
     }
     
     public String generateToken(String username) {
@@ -25,6 +30,16 @@ public class JwtUtil {
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSigningKey())
+                .compact();
+    }
+    
+    public String generateRefreshToken(String username) {
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .claim("type", "refresh")
                 .signWith(getSigningKey())
                 .compact();
     }

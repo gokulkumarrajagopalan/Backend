@@ -25,9 +25,10 @@ public class TaxUnitService {
     }
 
     public TaxUnit upsert(TaxUnit taxUnit) {
-        Optional<TaxUnit> existing = taxUnitRepository.findByCmpIdAndName(
+        // Use reconciliation identifier: cmpId + masterId
+        Optional<TaxUnit> existing = taxUnitRepository.findByCmpIdAndMasterId(
                 taxUnit.getCmpId(),
-                taxUnit.getName());
+                taxUnit.getMasterId());
 
         if (existing.isPresent()) {
             TaxUnit e = existing.get();

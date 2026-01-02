@@ -1,5 +1,5 @@
 -- Table: currency
-CREATE TABLE currency (
+CREATE TABLE IF NOT EXISTS currency (
     currency_id BIGSERIAL PRIMARY KEY,
     userid BIGINT NOT NULL,
     cmpid BIGINT NOT NULL,
@@ -14,5 +14,9 @@ CREATE TABLE currency (
     showamountinwords CHAR(1), -- 'Y' or 'N'
     suffixsymbol CHAR(1),      -- 'Y' or 'N'
     spacebetweenamountandsymbol CHAR(1), -- 'Y' or 'N'
-    languageid INT
+    languageid INT,
+    
+    CONSTRAINT fk_currency_user FOREIGN KEY (userid) REFERENCES users(userid) ON DELETE CASCADE,
+    CONSTRAINT fk_currency_company FOREIGN KEY (cmpid) REFERENCES companies(cmpid) ON DELETE CASCADE,
+    CONSTRAINT uk_currency_cmpid_name UNIQUE (cmpid, name)
 );

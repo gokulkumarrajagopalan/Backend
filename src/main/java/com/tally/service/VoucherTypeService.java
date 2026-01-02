@@ -25,9 +25,10 @@ public class VoucherTypeService {
     }
 
     public VoucherType upsert(VoucherType voucherType) {
-        Optional<VoucherType> existing = voucherTypeRepository.findByCmpIdAndName(
+        // Use reconciliation identifier: cmpId + masterId
+        Optional<VoucherType> existing = voucherTypeRepository.findByCmpIdAndMasterId(
                 voucherType.getCmpId(),
-                voucherType.getName());
+                voucherType.getMasterId());
 
         if (existing.isPresent()) {
             VoucherType e = existing.get();

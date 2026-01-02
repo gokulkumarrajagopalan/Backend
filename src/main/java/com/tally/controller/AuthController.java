@@ -8,6 +8,7 @@ import com.tally.service.interfaces.IAuthenticationService;
 import com.tally.service.interfaces.IResponseBuilder;
 import com.tally.service.interfaces.IUserService;
 import com.tally.websocket.SessionWebSocketHandler;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,7 @@ public class AuthController {
     }
     
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterRequest request) {
         try {
             User user = userService.createUser(
                 request.getUsername(),
@@ -128,6 +129,15 @@ public class AuthController {
                 response.put("licenceNo", user.get().getLicenceNo());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
+            
+            // Check if mobile is verified (if mobile is provided)
+            // if (user.get().getMobile() != null && !user.get().isMobileVerified()) {
+            //     Map<String, Object> response = new HashMap<>();
+            //     response.put("success", false);
+            //     response.put("message", "Mobile not verified. Please verify your mobile with OTP before logging in.");
+            //     response.put("mobile", user.get().getMobile());
+            //     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            // }
             
             String token = authenticationService.generateToken(user.get().getUsername());
             
@@ -338,9 +348,15 @@ public class AuthController {
     
     // Inner classes for request bodies
     public static class LoginRequest {
+        @jakarta.validation.constraints.NotBlank(message = "Username or email is required")
+        @jakarta.validation.constraints.Size(min = 3, max = 100, message = "Username or email must be between 3 and 100 characters")
         private String username;
+        
         private String email;
         private Long licenceNo;
+        
+        @jakarta.validation.constraints.NotBlank(message = "Password is required")
+        @jakarta.validation.constraints.Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
         private String password;
         
         public String getUsername() {
@@ -377,10 +393,25 @@ public class AuthController {
     }
     
     public static class RegisterRequest {
+        @jakarta.validation.constraints.NotBlank(message = "Username is required")
+        @jakarta.validation.constraints.Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+        @jakarta.validation.constraints.Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Username can only contain letters, numbers, underscores and hyphens")
         private String username;
+        
+        @jakarta.validation.constraints.NotBlank(message = "Email is required")
+        @jakarta.validation.constraints.Email(message = "Email should be valid")
         private String email;
+        
+        @jakarta.validation.constraints.NotNull(message = "Licence number is required")
+        @jakarta.validation.constraints.Positive(message = "Licence number must be positive")
         private Long licenceNo;
+        
+        @jakarta.validation.constraints.NotBlank(message = "Password is required")
+        @jakarta.validation.constraints.Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
         private String password;
+        
+        @jakarta.validation.constraints.NotBlank(message = "Full name is required")
+        @jakarta.validation.constraints.Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")
         private String fullName;
         
         public String getUsername() {

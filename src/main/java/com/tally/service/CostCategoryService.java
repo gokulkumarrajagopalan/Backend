@@ -25,9 +25,10 @@ public class CostCategoryService {
     }
 
     public CostCategory upsert(CostCategory costCategory) {
-        Optional<CostCategory> existing = costCategoryRepository.findByCmpIdAndName(
+        // Use reconciliation identifier: cmpId + masterId
+        Optional<CostCategory> existing = costCategoryRepository.findByCmpIdAndMasterId(
                 costCategory.getCmpId(),
-                costCategory.getName());
+                costCategory.getMasterId());
 
         if (existing.isPresent()) {
             CostCategory e = existing.get();

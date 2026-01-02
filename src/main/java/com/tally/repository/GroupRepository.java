@@ -30,6 +30,9 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     // Find by Tally Master ID
     Optional<Group> findByMasterId(Long masterId);
     
+    // UPSERT: Find by reconciliation identifier (cmpId + masterId)
+    Optional<Group> findByCmpIdAndMasterId(Long cmpId, Long masterId);
+    
     // Find by parent group
     List<Group> findByGrpParent(String grpParent);
     
@@ -60,4 +63,8 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
            "WHERE g.is_deleted = false " +
            ") SELECT * FROM group_tree ORDER BY level, grp_name", nativeQuery = true)
     List<Object[]> getGroupHierarchy(@Param("cmpId") Long cmpId);
+    
+    // Get max AlterID for a company
+    @Query("SELECT COALESCE(MAX(g.alterId), 0) FROM Group g WHERE g.cmpId = :cmpId")
+    Long getMaxAlterIdForCompany(@Param("cmpId") Long cmpId);
 }

@@ -25,9 +25,10 @@ public class CostCenterService {
     }
 
     public CostCenter upsert(CostCenter costCenter) {
-        Optional<CostCenter> existing = costCenterRepository.findByCmpIdAndName(
+        // Use reconciliation identifier: cmpId + masterId
+        Optional<CostCenter> existing = costCenterRepository.findByCmpIdAndMasterId(
                 costCenter.getCmpId(),
-                costCenter.getName());
+                costCenter.getMasterId());
 
         if (existing.isPresent()) {
             CostCenter e = existing.get();

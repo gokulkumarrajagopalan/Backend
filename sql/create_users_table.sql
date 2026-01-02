@@ -20,13 +20,19 @@ CREATE TABLE IF NOT EXISTS users (
     -- Email Verification Fields
     email_verified CHAR(1) DEFAULT 'N' CHECK (email_verified IN ('Y', 'N')),
     
-    -- OTP Verification Fields
+    -- Mobile and OTP Fields
+    mobile VARCHAR(20),
+    mobile_verified CHAR(1) DEFAULT 'N' CHECK (mobile_verified IN ('Y', 'N')),
     otp_code VARCHAR(6),
     otp_expiry TIMESTAMP,
     otp_sent_at TIMESTAMP,
     otp_verified CHAR(1) DEFAULT 'N' CHECK (otp_verified IN ('Y', 'N')),
     otp_resend_count INT DEFAULT 0,
     otp_last_resend_at TIMESTAMP,
+    
+    -- Mobile SMS Limits (3 per 24 hours)
+    sms_count_today INT DEFAULT 0,
+    sms_last_sent_date DATE,
     
     -- Composite unique key for email and licence_no
     CONSTRAINT uk_email_licence UNIQUE (email, licence_no)

@@ -177,20 +177,48 @@ public class LedgerController {
                 .orElse(ResponseEntity.notFound().build());
     }
     
+    @PutMapping("/master/{masterId}")
+    public ResponseEntity<Ledger> updateLedgerByMasterId(
+            @PathVariable Long masterId,
+            @RequestBody Ledger ledger) {
+        try {
+            ledger.setMasterId(masterId);
+            Ledger updatedLedger = ledgerService.upsertLedger(ledger);
+            return ResponseEntity.ok(updatedLedger);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @DeleteMapping("/master/{masterId}")
+    public ResponseEntity<Void> deleteLedgerByMasterId(@PathVariable Long masterId) {
+        try {
+            Optional<Ledger> ledger = ledgerService.getLedgerByMasterId(masterId);
+            if (ledger.isPresent()) {
+                ledgerService.deleteLedger(ledger.get().getLedId());
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
     // ========== TALLY SYNC ENDPOINT (CRITICAL) ==========
     
     @PostMapping("/sync")
-    public ResponseEntity<SyncResponse> syncLedgersFromTally(@RequestBody List<Ledger> ledgers) {
+    public ResponseEntity<java.util.Map<String, Object>> syncLedgersFromTally(@RequestBody List<Ledger> ledgers) {
         try {
             // System.out.println("📥 Received sync request for " + ledgers.size() + " ledgers");
             
             List<Ledger> syncedLedgers = ledgerService.syncLedgersFromTally(ledgers);
             
-            SyncResponse response = new SyncResponse();
-            response.setSuccess(true);
-            response.setTotalReceived(ledgers.size());
-            response.setTotalProcessed(syncedLedgers.size());
-            response.setMessage("Successfully synced " + syncedLedgers.size() + " ledgers from Tally");
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", true);
+            response.put("totalReceived", ledgers.size());
+            response.put("totalProcessed", syncedLedgers.size());
+            response.put("message", "Successfully synced " + syncedLedgers.size() + " ledgers from Tally");
             
             // System.out.println("✅ Sync completed: " + syncedLedgers.size() + " ledgers processed");
             
@@ -199,11 +227,11 @@ public class LedgerController {
             System.err.println("❌ Sync failed: " + e.getMessage());
             e.printStackTrace();
             
-            SyncResponse response = new SyncResponse();
-            response.setSuccess(false);
-            response.setTotalReceived(ledgers.size());
-            response.setTotalProcessed(0);
-            response.setMessage("Sync failed: " + e.getMessage());
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", false);
+            response.put("totalReceived", ledgers.size());
+            response.put("totalProcessed", 0);
+            response.put("message", "Sync failed: " + e.getMessage());
             
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -222,24 +250,5 @@ public class LedgerController {
         public void setTotalOpeningBalance(BigDecimal totalOpeningBalance) { 
             this.totalOpeningBalance = totalOpeningBalance; 
         }
-    }
-    
-    public static class SyncResponse {
-        private boolean success;
-        private int totalReceived;
-        private int totalProcessed;
-        private String message;
-        
-        public boolean isSuccess() { return success; }
-        public void setSuccess(boolean success) { this.success = success; }
-        
-        public int getTotalReceived() { return totalReceived; }
-        public void setTotalReceived(int totalReceived) { this.totalReceived = totalReceived; }
-        
-        public int getTotalProcessed() { return totalProcessed; }
-        public void setTotalProcessed(int totalProcessed) { this.totalProcessed = totalProcessed; }
-        
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
     }
 }

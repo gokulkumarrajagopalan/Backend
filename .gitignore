@@ -7,3 +7,28 @@ target/
 *.exe
 *.zip
 *.7z
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+secrets.properties
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Security Certificates
+*.p12
+*.pfx
+*.jks
+
+# Logs
+logs/
+log/
+
+# AWS Credentials
+~/.aws/credentials

@@ -20,13 +20,14 @@ public class LedgerService {
     
     // ========== CRITICAL: Multi-Company Upsert Logic ==========
     public Ledger upsertLedger(Ledger ledger) {
-        Optional<Ledger> existingLedger = ledgerRepository.findByCmpIdAndLedName(
+        // Use reconciliation identifier: cmpId + masterId
+        Optional<Ledger> existingLedger = ledgerRepository.findByCmpIdAndMasterId(
             ledger.getCmpId(), 
-            ledger.getLedName()
+            ledger.getMasterId()
         );
         
         if (existingLedger.isPresent()) {
-            // UPDATE existing ledger for this company
+            // UPDATE existing ledger
             Ledger existing = existingLedger.get();
             // System.out.println("♻️ Updating Ledger: " + existing.getLedName() 
             //     + " (ID: " + existing.getLedId() + ") for Company #" + existing.getCmpId());
@@ -141,6 +142,10 @@ public class LedgerService {
     
     public Optional<Ledger> getLedgerById(Long ledId) {
         return ledgerRepository.findById(ledId);
+    }
+    
+    public Optional<Ledger> getLedgerByMasterId(Long masterId) {
+        return ledgerRepository.findByMasterId(masterId);
     }
     
     public Optional<Ledger> getLedgerByGuid(String guid) {
