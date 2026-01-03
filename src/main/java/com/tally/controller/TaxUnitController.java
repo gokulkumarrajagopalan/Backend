@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/tax-units")
-@CrossOrigin(origins = "*")
 public class TaxUnitController {
 
     @Autowired

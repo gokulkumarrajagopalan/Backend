@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
-    @Value("${app.cors.allowed-origins:https://yourdomain.com,https://app.yourdomain.com}")
+    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:8080}")
     private String allowedOrigins;
 
     @Override
@@ -17,9 +17,10 @@ public class CorsConfig implements WebMvcConfigurer {
         
         registry.addMapping("/**")
                 .allowedOrigins(origins)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("Authorization", "Content-Type", "X-Device-Token")
-                .exposedHeaders("Authorization")
+                .allowedOriginPatterns("*") // Allow all origins for development
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                .allowedHeaders("*")
+                .exposedHeaders("Authorization", "Content-Type")
                 .allowCredentials(true)
                 .maxAge(3600);
     }

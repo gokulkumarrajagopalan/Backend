@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/godowns")
-@CrossOrigin(origins = "*")
 public class GodownController {
 
     @Autowired

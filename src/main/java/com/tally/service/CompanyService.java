@@ -82,4 +82,29 @@ public class CompanyService {
     public List<Company> findByUserId(Long userId) {
         return companyRepository.findByUserId(userId);
     }
+
+    public Company updateSyncStatus(Long companyId, com.tally.controller.CompanyController.SyncStatusUpdateRequest request) {
+        Optional<Company> existing = companyRepository.findById(companyId);
+        if (existing.isPresent()) {
+            Company company = existing.get();
+            
+            if (request.getSyncStatus() != null && !request.getSyncStatus().isEmpty()) {
+                company.setSyncStatus(request.getSyncStatus());
+            }
+            
+            if (request.getLastSyncDate() != null) {
+                company.setLastSyncDate(request.getLastSyncDate());
+            }
+            
+            if (request.getUpdatedAt() != null) {
+                company.setUpdatedAt(request.getUpdatedAt());
+            } else {
+                company.setUpdatedAt(LocalDateTime.now());
+            }
+            
+            return companyRepository.save(company);
+        }
+        
+        throw new IllegalArgumentException("Company not found with ID: " + companyId);
+    }
 }

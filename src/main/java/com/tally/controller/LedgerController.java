@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/ledgers")
-@CrossOrigin(origins = "*")
 public class LedgerController {
     
     @Autowired

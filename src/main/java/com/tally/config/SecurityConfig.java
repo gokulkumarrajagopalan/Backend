@@ -35,13 +35,25 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/auth/**", "/ws/**"))
+                .ignoringRequestMatchers("/auth/**", "/ws/**", 
+                    "/ledgers/sync", "/groups/sync", "/stock-items/sync", 
+                    "/stock-groups/sync", "/stock-categories/sync", "/cost-categories/sync",
+                    "/cost-centers/sync", "/currencies/sync", "/units/sync", "/godowns/sync",
+                    "/tax-units/sync", "/voucher-types/sync"))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
+                .requestMatchers("OPTIONS", "/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/session").permitAll()
-                .requestMatchers("OPTIONS", "/**").permitAll()
+                .requestMatchers("/config/**").permitAll()
+                // Sync endpoints - permit all, JWT filter handles authentication
+                .requestMatchers("/ledgers/sync", "/groups/sync", "/stock-items/sync", 
+                    "/stock-groups/sync", "/stock-categories/sync", "/cost-categories/sync",
+                    "/cost-centers/sync", "/currencies/sync", "/units/sync", "/godowns/sync",
+                    "/tax-units/sync", "/voucher-types/sync").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.PUT, "/companies/*/sync-status").authenticated()
+                .requestMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers

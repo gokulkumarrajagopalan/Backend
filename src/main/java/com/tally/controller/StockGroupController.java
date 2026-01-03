@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/stock-groups")
-@CrossOrigin(origins = "*")
 public class StockGroupController {
 
     @Autowired

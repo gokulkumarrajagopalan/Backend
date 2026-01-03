@@ -180,4 +180,59 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    @PutMapping("/{companyId}/sync-status")
+    public ResponseEntity<Map<String, Object>> updateCompanySyncStatus(
+            @PathVariable Long companyId,
+            @RequestBody SyncStatusUpdateRequest request) {
+        try {
+            Company company = companyService.updateSyncStatus(companyId, request);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Sync status updated successfully");
+            response.put("data", company);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to update sync status: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    // Inner request class for sync status updates
+    public static class SyncStatusUpdateRequest {
+        private String syncStatus;
+        private java.time.LocalDateTime lastSyncDate;
+        private java.time.LocalDateTime updatedAt;
+
+        public String getSyncStatus() {
+            return syncStatus;
+        }
+
+        public void setSyncStatus(String syncStatus) {
+            this.syncStatus = syncStatus;
+        }
+
+        public java.time.LocalDateTime getLastSyncDate() {
+            return lastSyncDate;
+        }
+
+        public void setLastSyncDate(java.time.LocalDateTime lastSyncDate) {
+            this.lastSyncDate = lastSyncDate;
+        }
+
+        public java.time.LocalDateTime getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(java.time.LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+    }
 }

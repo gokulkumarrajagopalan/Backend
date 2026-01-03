@@ -38,6 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         
+        // Skip JWT authentication for sync endpoints
+        String requestPath = request.getRequestURI();
+        if (isSyncEndpoint(requestPath) || isPublicEndpoint(requestPath)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         try {
             String authHeader = request.getHeader("Authorization");
             String token = null;
@@ -84,5 +91,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         
         filterChain.doFilter(request, response);
+    }
+    
+    private boolean isSyncEndpoint(String path) {
+        return path.endsWith("/sync") || 
+               path.matches(".*/sync$") ||
+               path.contains("/sync/");
+    }
+    
+    private boolean isPublicEndpoint(String path) {
+        return path.startsWith("/auth/") ||
+               path.startsWith("/ws/") ||
+               path.equals("/session") ||
+               path.startsWith("/config/");
     }
 }

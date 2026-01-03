@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/voucher-types")
-@CrossOrigin(origins = "*")
 public class VoucherTypeController {
 
     @Autowired

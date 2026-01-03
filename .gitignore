@@ -13,6 +13,11 @@ target/
 .env.*.local
 secrets.properties
 
+# Application properties (contain credentials)
+src/main/resources/application.properties
+src/main/resources/application-dev.properties
+src/main/resources/application-prod.properties
+
 # IDE
 .idea/
 .vscode/
